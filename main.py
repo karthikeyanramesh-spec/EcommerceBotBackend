@@ -8,14 +8,23 @@ from scraper import scrape_content
 from urllib.parse import urlparse, urljoin
 import asyncio
 from postgreconnect import engine
-from crawling import UltraCrawler
+from crawling import UltraCrawler, ensure_playwright_browsers
+
 from posttoweavi import index_knowledge_base
 import uvicorn
 from gemini import gemini_session_handler
 from fastapi import WebSocket
+
+# Install browsers on app startup
+try:
+    asyncio.run(ensure_playwright_browsers())
+except Exception as e:
+    print(f"Browser installation warning: {e}")
+
 class CrawlRequest(BaseModel):
     url: str
     max_urls: Optional[int] = 100000
+
 
 class SaveUrlsRequest(BaseModel):
     source_url: str

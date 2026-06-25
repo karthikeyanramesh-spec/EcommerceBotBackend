@@ -1,6 +1,29 @@
 
 
 from scrapling.spiders import Spider, Request, Response
+
+
+async def ensure_playwright_browsers():
+    """Install Playwright browsers if they don't exist"""
+    import subprocess
+    from pathlib import Path
+
+    browsers_path = Path.home() / ".cache" / "ms-playwright"
+    chromium_path = list(browsers_path.glob("chromium-*"))
+
+    if not chromium_path:
+        print("Installing Playwright browsers (this may take a minute)...")
+        try:
+            subprocess.run(
+                ["playwright", "install", "chromium", "--with-deps"],
+                check=True,
+                capture_output=True
+            )
+            print("✓ Playwright browsers installed successfully!")
+        except subprocess.CalledProcessError as e:
+            print(f"Warning: Failed to install browsers: {e}")
+
+
 from scrapling.fetchers import (
     FetcherSession,
     AsyncDynamicSession,
@@ -38,11 +61,13 @@ class UltraCrawler(Spider):
         self.browser_context = None
 
     async def setup_browser(self):
+        await ensure_playwright_browsers()
         self.playwright = await async_playwright().start()
         self.browser = await self.playwright.chromium.launch(headless=True)
         self.browser_context = await self.browser.new_context(
             ignore_https_errors=True
         )
+
     async def close_browser(self):
         if self.browser_context:
             await self.browser_context.close()
