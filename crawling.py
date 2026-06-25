@@ -6,7 +6,7 @@ from scrapling.fetchers import (
     AsyncDynamicSession,
     AsyncStealthySession
 )
-from playwright.async_api import async_playwright
+#from playwright.async_api import async_playwright
 from urllib.parse import urlparse, urljoin
 import asyncio
 import re
@@ -33,26 +33,26 @@ class UltraCrawler(Spider):
         self.queued = set()
 
         self.semaphore = asyncio.Semaphore(5)
-        self.playwright = None
-        self.browser = None
-        self.browser_context = None
+        # self.playwright = None
+        # self.browser = None
+        # self.browser_context = None
 
-    async def setup_browser(self):
-        self.playwright = await async_playwright().start()
-        self.browser = await self.playwright.chromium.launch(headless=True)
-        self.browser_context = await self.browser.new_context(
-            ignore_https_errors=True
-        )
-    async def close_browser(self):
-        if self.browser_context:
-            await self.browser_context.close()
-            self.browser_context = None
-        if self.browser:
-            await self.browser.close()
-            self.browser = None
-        if self.playwright:
-            await self.playwright.stop()
-            self.playwright = None
+    # async def setup_browser(self):
+    #     self.playwright = await async_playwright().start()
+    #     self.browser = await self.playwright.chromium.launch(headless=True)
+    #     self.browser_context = await self.browser.new_context(
+    #         ignore_https_errors=True
+    #     )
+    # async def close_browser(self):
+    #     if self.browser_context:
+    #         await self.browser_context.close()
+    #         self.browser_context = None
+    #     if self.browser:
+    #         await self.browser.close()
+    #         self.browser = None
+    #     if self.playwright:
+    #         await self.playwright.stop()
+    #         self.playwright = None
     def configure_sessions(self, manager):
 
         manager.add(
@@ -187,32 +187,32 @@ class UltraCrawler(Spider):
 
         except:
             return None
-    async def get_dynamic_links(self, url):
-        links = set()
-        if not self.browser_context:
-            return links
+    # async def get_dynamic_links(self, url):
+    #     links = set()
+    #     if not self.browser_context:
+    #         return links
 
-        page = await self.browser_context.new_page()
-        try:
-            await page.goto(
-                url,
-                wait_until="domcontentloaded",
-                timeout=20000
-            )
-            hrefs = await page.eval_on_selector_all(
-                "a[href]",
-                "els => els.map(el => el.href)"
-            )
-            for href in hrefs:
-                links.add(href)
-            html = await page.content()
-            regex_links = re.findall(r'https?://[^\s"\'>]+', html)
-            links.update(regex_links)
-        except Exception as e:
-            print(f"PLaywright Error: {url} -> {e}")
-        finally:
-            await page.close()
-        return links
+    #     page = await self.browser_context.new_page()
+    #     try:
+    #         await page.goto(
+    #             url,
+    #             wait_until="domcontentloaded",
+    #             timeout=20000
+    #         )
+    #         hrefs = await page.eval_on_selector_all(
+    #             "a[href]",
+    #             "els => els.map(el => el.href)"
+    #         )
+    #         for href in hrefs:
+    #             links.add(href)
+    #         html = await page.content()
+    #         regex_links = re.findall(r'https?://[^\s"\'>]+', html)
+    #         links.update(regex_links)
+    #     except Exception as e:
+    #         print(f"PLaywright Error: {url} -> {e}")
+    #     finally:
+    #         await page.close()
+    #     return links
 
     async def parse(self, response: Response):
 
@@ -278,12 +278,12 @@ class UltraCrawler(Spider):
             except Exception as e:
                 print(f"Stealth fallback failed: {e}")
             
-            try:
-                if len(links) < 15:
-                    pw_links = await self.get_dynamic_links(response.url)
-                    links.update(pw_links)
-            except Exception as e:
-                print(f"Playwright fallback failed: {e}")
+            # try:
+            #     if len(links) < 15:
+            #         pw_links = await self.get_dynamic_links(response.url)
+            #         links.update(pw_links)
+            # except Exception as e:
+            #     print(f"Playwright fallback failed: {e}")
 
             for link in links:
 
@@ -304,7 +304,7 @@ class UltraCrawler(Spider):
                 )
 
     async def closed(self):
-        await self.close_browser()
+        #await self.close_browser()
 
         print("\n========== SUMMARY ==========")
 
