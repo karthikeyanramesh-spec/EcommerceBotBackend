@@ -23,6 +23,7 @@ curl_cffi
 browserforge
 msgspec
 patchright
+protego
 
 # Environment Configuration
 python-dotenv
