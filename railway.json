@@ -1,6 +1,6 @@
 {
   "$schema": "https://railway.app",
   "build": {
-    "postBuildCmd": "playwright install chromium --with-deps"
+    "preBuildCmd": "playwright install chromium --with-deps"
   }
 }
