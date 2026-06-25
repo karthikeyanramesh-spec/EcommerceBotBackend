@@ -21,6 +21,7 @@ playwright
 certifi
 curl_cffi
 browserforge
+msgspec
 
 # Environment Configuration
 python-dotenv
