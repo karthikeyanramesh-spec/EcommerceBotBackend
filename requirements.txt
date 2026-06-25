@@ -20,6 +20,7 @@ scrapling
 playwright
 certifi
 curl_cffi
+browserforge
 
 # Environment Configuration
 python-dotenv
