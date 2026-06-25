@@ -19,6 +19,7 @@ aiohttp
 scrapling
 playwright
 certifi
+curl_cffi
 
 # Environment Configuration
 python-dotenv
