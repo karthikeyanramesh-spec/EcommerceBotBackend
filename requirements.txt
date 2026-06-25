@@ -17,7 +17,7 @@ google-genai
 # HTTP and Web Scraping/Crawling
 aiohttp
 scrapling
-playwright==1.61.1
+playwright==1.54.0
 certifi
 curl_cffi
 browserforge
